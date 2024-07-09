@@ -71,31 +71,4 @@ var _ = Describe("option test", func() {
 			})
 		})
 	})
-
-	Describe("token test", func() {
-		Context("Call api get token", func() {
-			It("should be get token as expected", func() {
-				optionTest.AppID = "cli_a602c1f9f93a500e"
-				optionTest.AppSecret = "kZgjf3frn3fEQ9Zsk6Uh0eEhoSPDZZsE"
-				_, err := GetTenantAccessToken(optionTest)
-				Expect(err).To(BeNil())
-			})
-			It("should be send message as expected", func() {
-				text := &ContentRenderText{
-					Text: " hi",
-				}
-				result, err := json.Marshal(text)
-				Expect(err).To(BeNil())
-				err = os.WriteFile("/tmp/fake-content1.txt", result, 0644)
-				Expect(err).To(BeNil())
-				optionTest.AppID = "cli_a602c1f9f93a500e"
-				optionTest.AppSecret = "kZgjf3frn3fEQ9Zsk6Uh0eEhoSPDZZsE"
-				optionTest.ReceiveIdValue = "oc_ed741e22603db268f855388c3cfc7f59"
-				caller, err := CreateFeiShuDataPost(optionTest)
-				Expect(err).To(BeNil())
-				err = SendMessage(optionTest, caller)
-				Expect(err).To(BeNil())
-			})
-		})
-	})
 })
