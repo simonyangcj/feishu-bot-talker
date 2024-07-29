@@ -16,6 +16,36 @@ import (
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
 )
 
+func CreateFeiShuDataPostWithText(option *option.Option, template, content string) (*model.FeiShuDataPost, error) {
+	caller := &model.FeiShuDataPost{
+		AppID:         option.AppID,
+		AppSecret:     option.AppSecret,
+		ReceiveIdType: option.ReceiveIdType,
+	}
+
+	if !strings.Contains(template, "%s") {
+		return nil, fmt.Errorf("template not proper config")
+	}
+
+	var render ContentRender
+
+	switch option.MessageType {
+	case "text":
+		render = &ContentRenderText{}
+	default:
+		return nil, fmt.Errorf("message-type %s is not supported", option.MessageType)
+	}
+
+	result, err := render.Render([]byte(fmt.Sprintf(template, content)))
+	if err != nil {
+		return caller, err
+	}
+	caller.Context = string(result)
+	caller.Context = feishuUtil.ReplaceAtTag(caller.Context)
+
+	return caller, err
+}
+
 func CreateFeiShuDataPost(option *option.Option) (*model.FeiShuDataPost, error) {
 	caller := &model.FeiShuDataPost{
 		AppID:         option.AppID,

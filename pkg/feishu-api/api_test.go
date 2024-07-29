@@ -9,6 +9,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+var template = `{"text":"<at user_id=\"all\"></at> %s"}`
+
 var _ = Describe("option test", func() {
 	var optionTest *option.Option
 	BeforeEach(func() {
@@ -32,6 +34,19 @@ var _ = Describe("option test", func() {
 	AfterEach(func() {
 		err := os.Remove("/tmp/fake-content1.txt")
 		Expect(err).To(BeNil())
+	})
+
+	Describe("CreateFeiShuDataPost test", func() {
+		Context("CreateFeiShuDataPostWithText test", func() {
+			It("should create FeiShuDataPost with text", func() {
+				caller, err := CreateFeiShuDataPostWithText(optionTest, template, "hi there")
+				Expect(err).To(BeNil())
+				Expect(caller.AppID).To(Equal("test-id"))
+				Expect(caller.AppSecret).To(Equal("test-secret"))
+				Expect(caller.ReceiveIdType).To(Equal("chat_id"))
+				Expect(caller.Context).To(Equal(`{"text":"<at user_id=\"all\"></at> hi there"}`))
+			})
+		})
 	})
 
 	Describe("render test", func() {
